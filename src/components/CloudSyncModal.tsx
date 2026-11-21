@@ -14,6 +14,7 @@ import {
   getSavedSupabaseConfig, 
   saveSupabaseConfig, 
   clearSupabaseConfig, 
+  sanitizeSupabaseUrl,
   SUPABASE_SETUP_SQL 
 } from '../services/supabase';
 import type { Dish, Restaurant } from '../types';
@@ -55,11 +56,12 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
       alert('Vui lòng nhập đầy đủ Supabase URL và Anon Key');
       return;
     }
-    saveSupabaseConfig(url.trim(), anonKey.trim());
-    setStatusMessage('Đã lưu cấu hình Supabase! Vui lòng tải lại trang.');
+    const cleaned = sanitizeSupabaseUrl(url);
+    saveSupabaseConfig(cleaned, anonKey.trim());
+    setStatusMessage('Đã lưu cấu hình Supabase! Đang tải lại trang...');
     setTimeout(() => {
       window.location.reload();
-    }, 1000);
+    }, 600);
   };
 
   const handleDisconnect = () => {
@@ -192,7 +194,7 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
 
             <div>
               <label className="block text-[11px] font-bold text-slate-700 dark:text-zinc-300 uppercase mb-1">
-                Project URL
+                Project URL <span className="text-[10px] font-normal text-slate-400">(Không có /rest/v1 ở cuối)</span>
               </label>
               <input
                 type="text"
@@ -211,7 +213,7 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
                 type="password"
                 value={anonKey}
                 onChange={e => setAnonKey(e.target.value)}
-                placeholder="VD: eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+                placeholder="VD: sb_publishable_... hoặc eyJhbGciOiJIUzI1NiIsInR5cCI6..."
                 className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-zinc-100 border border-slate-200 dark:border-zinc-700 rounded-xl text-xs focus:bg-white dark:focus:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
               />
             </div>

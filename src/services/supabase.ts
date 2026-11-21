@@ -3,6 +3,22 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 const STORAGE_KEY_SUPABASE_URL = 'food_app_supabase_url';
 const STORAGE_KEY_SUPABASE_ANON_KEY = 'food_app_supabase_anon_key';
 
+/**
+ * Tự động làm sạch URL Supabase:
+ * Nếu người dùng lỡ copy dán cả `/rest/v1` hoặc dấu gạch chéo cuối thì hàm này sẽ tự cắt bỏ
+ * VD: "https://xyz.supabase.co/rest/v1/" -> "https://xyz.supabase.co"
+ */
+export function sanitizeSupabaseUrl(rawUrl: string): string {
+  let cleaned = rawUrl.trim();
+  // Cắt bỏ dấu gạch chéo cuối cùng
+  cleaned = cleaned.replace(/\/+$/, '');
+  // Cắt bỏ /rest/v1 nếu người dùng copy từ mục Data API
+  cleaned = cleaned.replace(/\/rest\/v1\/?$/i, '');
+  // Cắt lại lần nữa nếu còn dấu gạch chéo
+  cleaned = cleaned.replace(/\/+$/, '');
+  return cleaned;
+}
+
 export function getSavedSupabaseConfig(): { url: string; anonKey: string } | null {
   const envUrl = import.meta.env.VITE_SUPABASE_URL || '';
   const envKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
@@ -11,19 +27,25 @@ export function getSavedSupabaseConfig(): { url: string; anonKey: string } | nul
   const localKey = localStorage.getItem(STORAGE_KEY_SUPABASE_ANON_KEY) || envKey;
 
   if (localUrl && localKey) {
-    return { url: localUrl, anonKey: localKey };
+    return { 
+      url: sanitizeSupabaseUrl(localUrl), 
+      anonKey: localKey.trim() 
+    };
   }
   return null;
 }
 
 export function saveSupabaseConfig(url: string, anonKey: string): void {
-  localStorage.setItem(STORAGE_KEY_SUPABASE_URL, url.trim());
+  const cleanUrl = sanitizeSupabaseUrl(url);
+  localStorage.setItem(STORAGE_KEY_SUPABASE_URL, cleanUrl);
   localStorage.setItem(STORAGE_KEY_SUPABASE_ANON_KEY, anonKey.trim());
+  supabaseInstance = null; // reset client instance
 }
 
 export function clearSupabaseConfig(): void {
   localStorage.removeItem(STORAGE_KEY_SUPABASE_URL);
   localStorage.removeItem(STORAGE_KEY_SUPABASE_ANON_KEY);
+  supabaseInstance = null;
 }
 
 let supabaseInstance: SupabaseClient | null = null;

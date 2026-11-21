@@ -78,6 +78,13 @@ export async function fetchAllData(): Promise<{ dishes: Dish[]; restaurants: Res
         saveLocalRestaurants(cloudRestaurants);
 
         return { dishes: cloudDishes, restaurants: cloudRestaurants, isCloud: true };
+      } else {
+        if (dishesRes.error) {
+          console.error('Supabase dishes error:', dishesRes.error.message || dishesRes.error);
+        }
+        if (restRes.error) {
+          console.error('Supabase restaurants error:', restRes.error.message || restRes.error);
+        }
       }
     } catch (e) {
       console.warn('Không thể kết nối Supabase, chuyển sang dùng LocalStorage:', e);
