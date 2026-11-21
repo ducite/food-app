@@ -24,6 +24,8 @@ export interface Restaurant {
 
 export type FilterMode = 'AND' | 'OR';
 
+export type Theme = 'light' | 'dark';
+
 export interface SearchFilterState {
   selectedDishIds: string[];
   filterMode: FilterMode;

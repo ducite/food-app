@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import type { Dish, Restaurant, FilterMode } from './types';
+import type { Dish, Restaurant, FilterMode, Theme } from './types';
 import {
   fetchAllData,
   createDish,
@@ -21,7 +21,31 @@ import { MenuImageViewer } from './components/MenuImageViewer';
 import { CloudSyncModal } from './components/CloudSyncModal';
 import { Search, UtensilsCrossed, Plus } from 'lucide-react';
 
+const THEME_STORAGE_KEY = 'food_finder_theme';
+
 export default function App() {
+  // Theme state: 'light' or 'dark'
+  const [theme, setTheme] = useState<Theme>(() => {
+    const saved = localStorage.getItem(THEME_STORAGE_KEY);
+    if (saved === 'dark' || saved === 'light') return saved;
+    return 'light';
+  });
+
+  // Apply dark class to root document element
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
+  };
+
   // Data states
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -108,13 +132,11 @@ export default function App() {
     });
   };
 
-  // Clear dish selection
   const handleClearSelectedDishes = () => {
     setSelectedDishIds([]);
     setIsDishSearchActive(false);
   };
 
-  // Trigger search by dish
   const handleApplyDishSearch = () => {
     if (selectedDishIds.length > 0) {
       setIsDishSearchActive(true);
@@ -187,8 +209,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans pb-16">
-      {/* 1. App Header */}
+    <div className="min-h-screen bg-slate-50 dark:bg-black text-slate-800 dark:text-zinc-100 flex flex-col font-sans pb-16 transition-colors duration-200">
+      {/* 1. App Header (kèm nút đổi Theme Sáng / Tối) */}
       <Header
         onOpenAddRestaurant={() => {
           setEditingRestaurant(null);
@@ -199,6 +221,8 @@ export default function App() {
         isCloud={isCloud}
         onRefresh={loadData}
         isRefreshing={isRefreshing}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       {/* Main Container */}
@@ -218,18 +242,18 @@ export default function App() {
 
         {/* 3. Search Bar by Restaurant Name/Address */}
         <div className="relative mb-4">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
           <input
             type="text"
             value={searchKeyword}
             onChange={e => setSearchKeyword(e.target.value)}
             placeholder="Tìm theo tên quán hoặc địa chỉ..."
-            className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-slate-200/90 rounded-2xl shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all placeholder:text-slate-400"
+            className="w-full pl-10 pr-4 py-2.5 text-sm bg-white dark:bg-zinc-900 border border-slate-200/90 dark:border-zinc-800 rounded-2xl shadow-xs text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 dark:focus:ring-emerald-500/20 focus:border-orange-500 dark:focus:border-emerald-500 transition-all"
           />
           {searchKeyword && (
             <button
               onClick={() => setSearchKeyword('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 px-2 py-0.5 rounded-md cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 dark:text-zinc-400 hover:text-slate-600 dark:hover:text-zinc-200 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 px-2 py-0.5 rounded-md cursor-pointer"
             >
               Xóa
             </button>
@@ -239,13 +263,13 @@ export default function App() {
         {/* Section Title & Status Indicator */}
         <div className="flex items-center justify-between mb-3 px-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-bold text-slate-800">
+            <h2 className="text-sm font-bold text-slate-800 dark:text-zinc-100">
               {isDishSearchActive
                 ? `Kết quả tra cứu món (${filteredRestaurants.length} quán)`
                 : `Danh sách quán ăn (${filteredRestaurants.length})`}
             </h2>
             {isDishSearchActive && (
-              <span className="text-[11px] font-semibold text-orange-600 bg-orange-100/80 px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-semibold text-orange-600 dark:text-emerald-400 bg-orange-100/80 dark:bg-emerald-950/70 px-2 py-0.5 rounded-full">
                 {filterMode === 'AND' ? 'Khớp đủ món' : 'Khớp ≥ 1 món'}
               </span>
             )}
@@ -254,7 +278,7 @@ export default function App() {
           {isDishSearchActive && (
             <button
               onClick={handleClearSelectedDishes}
-              className="text-xs font-medium text-slate-500 hover:text-orange-600 transition-colors cursor-pointer"
+              className="text-xs font-medium text-slate-500 dark:text-zinc-400 hover:text-orange-600 dark:hover:text-emerald-400 transition-colors cursor-pointer"
             >
               Hiện tất cả quán
             </button>
@@ -263,13 +287,13 @@ export default function App() {
 
         {/* 4. Danh sách Quán (Restaurant Cards) */}
         {filteredRestaurants.length === 0 ? (
-          <div className="bg-white rounded-3xl p-8 border border-slate-200/80 text-center shadow-xs flex flex-col items-center justify-center space-y-3">
-            <div className="w-14 h-14 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center">
+          <div className="bg-white dark:bg-zinc-900 rounded-3xl p-8 border border-slate-200/80 dark:border-zinc-800 text-center shadow-xs flex flex-col items-center justify-center space-y-3">
+            <div className="w-14 h-14 rounded-2xl bg-orange-50 dark:bg-emerald-950/50 text-orange-500 dark:text-emerald-400 flex items-center justify-center">
               <UtensilsCrossed className="w-7 h-7" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-800">Không tìm thấy quán nào</h3>
-              <p className="text-xs text-slate-500 max-w-sm mt-1">
+              <h3 className="text-base font-bold text-slate-800 dark:text-zinc-100">Không tìm thấy quán nào</h3>
+              <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-sm mt-1">
                 {isDishSearchActive
                   ? 'Không có quán nào phục vụ các món bạn vừa chọn. Thử chọn chế độ "Có ít nhất 1 món" hoặc thêm quán mới.'
                   : 'Chưa có quán ăn nào khớp với từ khóa tìm kiếm.'}
@@ -280,7 +304,7 @@ export default function App() {
                 setEditingRestaurant(null);
                 setIsFormOpen(true);
               }}
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-500 hover:bg-orange-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" />
               <span>Thêm quán mới ngay</span>
@@ -302,7 +326,6 @@ export default function App() {
       </main>
 
       {/* 5. Modals */}
-      {/* Chi tiết quán */}
       <RestaurantDetailModal
         restaurant={selectedRestaurant}
         onClose={() => setSelectedRestaurant(null)}
@@ -317,7 +340,6 @@ export default function App() {
         }}
       />
 
-      {/* Form thêm & sửa quán */}
       <RestaurantFormModal
         isOpen={isFormOpen}
         onClose={() => {
@@ -330,7 +352,6 @@ export default function App() {
         onQuickAddDish={handleAddDish}
       />
 
-      {/* Quản lý danh mục món ăn */}
       <DishManagementModal
         isOpen={isDishesModalOpen}
         onClose={() => setIsDishesModalOpen(false)}
@@ -340,7 +361,6 @@ export default function App() {
         onDeleteDish={handleDeleteDish}
       />
 
-      {/* Đồng bộ & chia sẻ đám mây (Supabase / JSON) */}
       <CloudSyncModal
         isOpen={isSyncModalOpen}
         onClose={() => setIsSyncModalOpen(false)}
@@ -350,7 +370,6 @@ export default function App() {
         onResetData={handleResetData}
       />
 
-      {/* Xem ảnh Menu phóng to (Lightbox) */}
       {menuViewerData && (
         <MenuImageViewer
           images={menuViewerData.images}

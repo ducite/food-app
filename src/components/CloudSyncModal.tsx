@@ -77,7 +77,6 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
     setTimeout(() => setCopiedSql(false), 2000);
   };
 
-  // Export data as JSON file
   const handleExportJSON = () => {
     const data = {
       version: '1.0',
@@ -94,7 +93,6 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
     URL.revokeObjectURL(href);
   };
 
-  // Import data from JSON file
   const handleImportJSON = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -121,37 +119,37 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
   const isConnected = Boolean(getSavedSupabaseConfig());
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 dark:bg-black/80 backdrop-blur-xs animate-in fade-in duration-200">
       <div 
-        className="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
+        className="bg-white dark:bg-zinc-900 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 dark:border-zinc-800 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200 text-slate-600 dark:text-zinc-300"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between gap-4">
+        <div className="px-6 py-4 border-b border-slate-100 dark:border-zinc-800 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <Cloud className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-900">Đồng bộ & Chia sẻ dữ liệu</h2>
-              <p className="text-xs text-slate-500">Dùng chung dữ liệu giữa PC và điện thoại bạn bè</p>
+              <h2 className="text-base font-bold text-slate-900 dark:text-zinc-100">Đồng bộ & Chia sẻ dữ liệu</h2>
+              <p className="text-xs text-slate-500 dark:text-zinc-400">Dùng chung dữ liệu giữa PC và điện thoại bạn bè</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors cursor-pointer"
+            className="p-1.5 text-slate-400 dark:text-zinc-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 rounded-full transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto space-y-5 text-xs text-slate-600">
+        <div className="p-6 overflow-y-auto space-y-5 text-xs">
           {/* Status banner */}
           <div className={`p-3.5 rounded-2xl border flex items-center justify-between gap-3 ${
             isConnected 
-              ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
-              : 'bg-amber-50 border-amber-200 text-amber-800'
+              ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300' 
+              : 'bg-amber-50 dark:bg-zinc-800/80 border-amber-200 dark:border-zinc-700 text-amber-800 dark:text-amber-400'
           }`}>
             <div className="flex items-center gap-2.5">
               <ShieldCheck className="w-5 h-5 shrink-0" />
@@ -170,7 +168,7 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
               <button
                 type="button"
                 onClick={handleDisconnect}
-                className="px-2.5 py-1 text-[11px] font-semibold bg-white text-rose-600 rounded-lg shadow-xs hover:bg-rose-50 cursor-pointer"
+                className="px-2.5 py-1 text-[11px] font-semibold bg-white dark:bg-zinc-800 text-rose-600 dark:text-rose-400 rounded-lg shadow-xs hover:bg-rose-50 dark:hover:bg-zinc-700 cursor-pointer"
               >
                 Ngắt kết nối
               </button>
@@ -179,13 +177,13 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
 
           {/* Section 1: Supabase Configuration */}
           <div className="space-y-3">
-            <h4 className="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+            <h4 className="font-bold text-slate-800 dark:text-zinc-100 text-sm flex items-center gap-1.5">
               <span>Cách 1: Đồng bộ qua Supabase (Miễn phí 100%)</span>
               <a 
                 href="https://supabase.com" 
                 target="_blank" 
                 rel="noreferrer"
-                className="text-orange-600 inline-flex items-center gap-0.5 hover:underline text-xs"
+                className="text-orange-600 dark:text-emerald-400 inline-flex items-center gap-0.5 hover:underline text-xs"
               >
                 <span>Tạo tài khoản</span>
                 <ExternalLink className="w-3 h-3" />
@@ -193,7 +191,7 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
             </h4>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
+              <label className="block text-[11px] font-bold text-slate-700 dark:text-zinc-300 uppercase mb-1">
                 Project URL
               </label>
               <input
@@ -201,12 +199,12 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
                 value={url}
                 onChange={e => setUrl(e.target.value)}
                 placeholder="VD: https://xyzcompany.supabase.co"
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-zinc-100 border border-slate-200 dark:border-zinc-700 rounded-xl text-xs focus:bg-white dark:focus:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
+              <label className="block text-[11px] font-bold text-slate-700 dark:text-zinc-300 uppercase mb-1">
                 Anon Public Key
               </label>
               <input
@@ -214,7 +212,7 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
                 value={anonKey}
                 onChange={e => setAnonKey(e.target.value)}
                 placeholder="VD: eyJhbGciOiJIUzI1NiIsInR5cCI6..."
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 text-slate-900 dark:text-zinc-100 border border-slate-200 dark:border-zinc-700 rounded-xl text-xs focus:bg-white dark:focus:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
               />
             </div>
 
@@ -229,23 +227,23 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
               <button
                 type="button"
                 onClick={copySql}
-                className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 font-semibold rounded-xl transition-all cursor-pointer"
               >
                 {copiedSql ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copiedSql ? 'Đã copy mã SQL!' : 'Copy mã tạo bảng SQL'}</span>
               </button>
             </div>
-            {statusMessage && <p className="text-emerald-600 font-medium">{statusMessage}</p>}
+            {statusMessage && <p className="text-emerald-600 dark:text-emerald-400 font-medium">{statusMessage}</p>}
           </div>
 
-          <hr className="border-slate-100" />
+          <hr className="border-slate-100 dark:border-zinc-800" />
 
-          {/* Section 2: Quick JSON Backup / File Share */}
+          {/* Section 2: Quick JSON Backup */}
           <div className="space-y-3">
-            <h4 className="font-bold text-slate-800 text-sm">
+            <h4 className="font-bold text-slate-800 dark:text-zinc-100 text-sm">
               Cách 2: Chia sẻ nhanh bằng tệp tin JSON (Không cần cấu hình)
             </h4>
-            <p className="text-slate-500">
+            <p className="text-slate-500 dark:text-zinc-400">
               Bạn có thể xuất toàn bộ quán & món thành 1 file để gửi qua Zalo/Telegram cho bạn bè nhập vào app của họ.
             </p>
 
@@ -253,13 +251,13 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
               <button
                 type="button"
                 onClick={handleExportJSON}
-                className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 font-semibold rounded-xl cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Xuất file sao lưu</span>
               </button>
 
-              <label className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl cursor-pointer">
+              <label className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 font-semibold rounded-xl cursor-pointer">
                 <Upload className="w-3.5 h-3.5" />
                 <span>Nhập file sao lưu</span>
                 <input
@@ -272,11 +270,11 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
             </div>
           </div>
 
-          <hr className="border-slate-100" />
+          <hr className="border-slate-100 dark:border-zinc-800" />
 
           {/* Section 3: Reset data */}
           <div className="flex items-center justify-between pt-1">
-            <span className="text-slate-400">Khôi phục về dữ liệu mẫu ban đầu</span>
+            <span className="text-slate-400 dark:text-zinc-500">Khôi phục về dữ liệu mẫu ban đầu</span>
             <button
               type="button"
               onClick={() => {
@@ -285,7 +283,7 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
                   onClose();
                 }
               }}
-              className="inline-flex items-center gap-1 text-rose-500 hover:underline font-medium cursor-pointer"
+              className="inline-flex items-center gap-1 text-rose-500 dark:text-rose-400 hover:underline font-medium cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Khôi phục mẫu</span>
@@ -294,11 +292,11 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 flex justify-end">
+        <div className="px-6 py-3 bg-slate-50 dark:bg-zinc-950 border-t border-slate-100 dark:border-zinc-800 flex justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200 rounded-xl transition-colors cursor-pointer"
+            className="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-zinc-400 hover:bg-slate-200 dark:hover:bg-zinc-800 rounded-xl transition-colors cursor-pointer"
           >
             Đóng
           </button>
